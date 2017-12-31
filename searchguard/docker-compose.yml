@@ -1,0 +1,69 @@
+version: '2'
+
+services:
+  elasticsearch:
+    image: bertrandmartel/docker-elasticsearch:proxy-config
+    environment:
+      ELASTIC_PWD: "changeme"
+      KIBANA_PWD: "changeme"
+      TS_PWD: "changeme"
+      LOGSTASH_PWD: "changeme"
+      BEATS_PWD: "changeme"
+      HTTP_SSL: "false"
+      HEAP_SIZE: 2g
+    volumes:
+      - elasticsearch_data:/elasticsearch/data
+      - elasticsearch_config:/elasticsearch/config
+    restart: always
+  kibana:
+    links:
+      - elasticsearch
+    image: bertrandmartel/docker-kibana:proxy-config
+    environment:
+      KIBANA_PWD: "changeme"
+      ELASTICSEARCH_HOST: elasticsearch
+      ELASTICSEARCH_PORT: 9200
+      ELASTICSEARCH_PROTOCOL: http
+    volumes:
+      - kibana_config:/opt/kibana/config
+      - elasticsearch_config:/etc/elasticsearch
+    restart: always
+  oauth2-proxy:
+    build: ../oauth2-proxy
+    restart: always
+    ports:
+      - "4180:4180"
+    links:
+      - nginx-proxy
+    environment:
+      - EMAIL_DOMAIN=*
+      - UPSTREAM=http://nginx-proxy:8080/
+      - HTTP_ADDRESS=http://:4180
+      - APPROVAL_PROMPT=auto
+      - REDIRECT_URL=http://localhost:4180/oauth2/callback
+      - COOKIE_NAME=_oauth2_proxy
+      - COOKIE_SECRET=secretsecret
+      - COOKIE_SECURE=false
+      - PROVIDER=github
+      - GITHUB_ORG=<Your Org>
+      - GITHUB_TEAM=<Your Team>
+      - CLIENT_ID=<Your Github Client ID>
+      - CLIENT_SECRET=<Your Github Client Secret>
+  nginx-proxy:
+    build: ../nginx-proxy
+    links:
+      - elasticsearch
+    environment:
+      - NGINX_PORT=8080
+      - DIGEST=ZWxhc3RpYzpjaGFuZ2VtZQ==
+      - DOLLAR=$$
+    command: /bin/bash -c "envsubst < /etc/nginx/nginx-template.conf > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+    restart: always
+
+volumes:
+  elasticsearch_data:
+    driver: local
+  elasticsearch_config:
+    driver: local
+  kibana_config:
+    driver: local

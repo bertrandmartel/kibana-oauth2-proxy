@@ -1,0 +1,63 @@
+version: '2.1'
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-platinum:6.1.1
+    container_name: elasticsearch
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+      - ELASTIC_PASSWORD=changeme
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.1.1
+    container_name: kibana
+    environment:
+      - SERVER_NAME=kibana
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - elasticsearch.username=elastic
+      - elasticsearch.password=changeme
+      - "elasticsearch.requestHeadersWhitelist=[ es-security-runas-user, authorization ]"
+      - "xpack.monitoring.elasticsearch.requestHeadersWhitelist=[ es-security-runas-user, authorization ]"
+  oauth2-proxy:
+    build: ../oauth2-proxy
+    restart: always
+    ports:
+      - "4180:4180"
+    links:
+      - nginx-proxy
+    environment:
+      - EMAIL_DOMAIN=*
+      - UPSTREAM=http://nginx-proxy:8080/
+      - HTTP_ADDRESS=http://:4180
+      - APPROVAL_PROMPT=auto
+      - REDIRECT_URL=http://localhost:4180/oauth2/callback
+      - COOKIE_NAME=_oauth2_proxy
+      - COOKIE_SECRET=secretsecret
+      - COOKIE_SECURE=false
+      - PROVIDER=github
+      - GITHUB_ORG=<Your Org>
+      - GITHUB_TEAM=<Your Team>
+      - CLIENT_ID=<Your Github Client ID>
+      - CLIENT_SECRET=<Your Github Client Secret>
+  nginx-proxy:
+    build: ../nginx-proxy
+    links:
+      - elasticsearch
+    environment:
+      - NGINX_PORT=8080
+      - DIGEST=ZWxhc3RpYzpjaGFuZ2VtZQ==
+      - DOLLAR=$$
+    command: /bin/bash -c "envsubst < /etc/nginx/nginx-template.conf > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+    restart: always
+
+volumes:
+  elasticsearch_data:
+    driver: local
