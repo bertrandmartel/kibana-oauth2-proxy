@@ -71,6 +71,8 @@ oauth2-proxy:
 
 After composing up, go to http://localhost:4180/kibana
 
+You can find a sample config [here](https://github.com/bertrandmartel/kibana-oauth2-proxy/blob/base-path/searchguard/docker-compose.yml)
+
 ## License
 
     The MIT License (MIT) Copyright (c) 2017 Bertrand Martel
