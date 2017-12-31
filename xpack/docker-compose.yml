@@ -55,6 +55,7 @@ services:
       - NGINX_PORT=8080
       - DIGEST=ZWxhc3RpYzpjaGFuZ2VtZQ==
       - DOLLAR=$$
+      - BASE_PATH=/
     command: /bin/bash -c "envsubst < /etc/nginx/nginx-template.conf > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
     restart: always
 

@@ -45,6 +45,30 @@ The `searchguard/docker-compose.yml` uses two custom images with built-in proxy 
 
 For already existing configuration, check [Using Kibana with proxy authentication](http://docs.search-guard.com/latest/kibana-authentication-search-guard#using-kibana-with-proxy-authentication)
 
+## Using a base path
+
+Only when using Search Guard config, if you want to use a base path, for instance "/kibana" : 
+
+```yaml
+nginx-proxy:
+  environment:
+    - BASE_PATH=/kibana/
+```
+and 
+
+```yaml
+kibana:
+  environment:
+    SERVER_BASE_PATH: "/kibana"
+```
+and
+
+```yaml
+oauth2-proxy:
+  environment:
+    - UPSTREAM=http://nginx-proxy:8080/kibana/
+```
+
 ## License
 
     The MIT License (MIT) Copyright (c) 2017 Bertrand Martel
