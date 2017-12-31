@@ -24,6 +24,7 @@ services:
       ELASTICSEARCH_HOST: elasticsearch
       ELASTICSEARCH_PORT: 9200
       ELASTICSEARCH_PROTOCOL: http
+      SERVER_BASE_PATH: "/kibana"
     volumes:
       - kibana_config:/opt/kibana/config
       - elasticsearch_config:/etc/elasticsearch
@@ -37,7 +38,7 @@ services:
       - nginx-proxy
     environment:
       - EMAIL_DOMAIN=*
-      - UPSTREAM=http://nginx-proxy:8080/
+      - UPSTREAM=http://nginx-proxy:8080/kibana/
       - HTTP_ADDRESS=http://:4180
       - APPROVAL_PROMPT=auto
       - REDIRECT_URL=http://localhost:4180/oauth2/callback
@@ -57,7 +58,7 @@ services:
       - NGINX_PORT=8080
       - DIGEST=ZWxhc3RpYzpjaGFuZ2VtZQ==
       - DOLLAR=$$
-      - BASE_PATH=/
+      - BASE_PATH=/kibana/
     command: /bin/bash -c "envsubst < /etc/nginx/nginx-template.conf > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
     restart: always
 
