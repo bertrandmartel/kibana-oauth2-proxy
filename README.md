@@ -1,6 +1,6 @@
-# Oauth2.0 proxy config for ELK
+# Kibana Oauth2.0 proxy config
 
-Docker configuration for using [oauth2_proxy](https://github.com/bitly/oauth2_proxy) as Oauth2.0 proxy for ELK 6.1.1 using either : 
+Docker configuration for using [oauth2_proxy](https://github.com/bitly/oauth2_proxy) as Oauth2.0 proxy for Kibana 6.1.1 using either : 
 
 * [Search Guard](http://docs.search-guard.com/latest/main-concepts)
 * [X-Pack](https://www.elastic.co/products/x-pack)
@@ -68,6 +68,8 @@ oauth2-proxy:
   environment:
     - UPSTREAM=http://nginx-proxy:8080/kibana/
 ```
+
+After composing up, go to http://localhost:4180/kibana
 
 ## License
 
