@@ -5,6 +5,9 @@ Docker configuration for using [oauth2_proxy](https://github.com/bitly/oauth2_pr
 * [Search Guard](http://docs.search-guard.com/latest/main-concepts)
 * [X-Pack](https://www.elastic.co/products/x-pack)
 
+![oauth2](https://user-images.githubusercontent.com/5183022/34469919-b20b629e-ef27-11e7-84a7-3ec9ea5e765e.png)
+
+
 Edit `searchguard/docker-compose.yml` or `xpack/docker-compose.yml` with correct oauth config (container `oauth2-proxy`) : 
 
 ```yaml
@@ -75,4 +78,4 @@ You can find a sample config [here](https://github.com/bertrandmartel/kibana-oau
 
 ## License
 
-    The MIT License (MIT) Copyright (c) 2017 Bertrand Martel
+    The MIT License (MIT) Copyright (c) 2017-2018 Bertrand Martel
